@@ -1,44 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { Eye, EyeOff } from "lucide-react";
 
 const Signup = () => {
   const navigate = useNavigate();
 
-  // ================= STATE =================
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
 
-  // ================= VALIDATION REGEX =================
-  const emailRegex = /^[A-Za-z0-9._%+-]+@(gmail|yahoo)\.com$/;
-    const passwordRegex =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
+  /* =========================
+     Load remembered email
+  ========================== */
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberEmail");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
-
-  // ================= SUBMIT =================
+  /* =========================
+     Submit
+  ========================== */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    // Email validation
-    if (!emailRegex.test(email)) {
-      setError("Email must be @gmail.com or @yahoo.com");
-      return;
+    if (password !== confirmPassword) {
+      return setError("Passwords do not match");
     }
-
-    // Password validation
-    if (!passwordRegex.test(password)) {
-      setError(
-        "Password must be 7-9 characters with uppercase, lowercase, number and special character."
-      );
-      return;
-    }
-
-    setLoading(true);
 
     try {
       await api.post("/auth/register", {
@@ -48,91 +44,119 @@ const Signup = () => {
         role: "patient"
       });
 
+      if (rememberMe) {
+        localStorage.setItem("rememberEmail", email);
+      } else {
+        localStorage.removeItem("rememberEmail");
+      }
+
+      alert("Account created successfully");
       navigate("/login");
 
     } catch (err) {
       setError(err.response?.data?.error || "Signup failed");
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Sign Up
-        </h2>
+    <div className="flex min-h-screen">
 
-        {error && (
-          <p className="text-red-500 mb-4 text-sm text-center">
-            {error}
-          </p>
-        )}
+      {/* LEFT SIDE */}
+      <div className="hidden md:flex w-1/2 bg-gradient-to-br from-indigo-600 to-purple-700 text-white flex-col justify-center items-center p-12">
+        <h1 className="text-4xl font-bold mb-4">Wellnest Hospital</h1>
+        <p className="text-lg text-center opacity-90">
+          Join Our Smart Healthcare System  
+          <br /> Secure • Reliable • Advanced
+        </p>
+      </div>
 
-        <input
-          type="text"
-          autoComplete="off"
-          placeholder="Name"
-          className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
+      {/* RIGHT SIDE */}
+      <div className="flex w-full md:w-1/2 justify-center items-center bg-gray-100">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white p-8 rounded-2xl shadow-xl w-96 space-y-5"
+        >
+          <h2 className="text-2xl font-bold text-center">
+            Create Account
+          </h2>
 
-        <input
-          type="email"
-          autoComplete="off"
-          placeholder="Email"
-          className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
 
-        <div className="relative mb-6">
+          {/* Name */}
           <input
-            type={showPassword ? "text" : "password"}
-            autoComplete="off"
-            placeholder="Password"
-            className="w-full p-3 border rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="text"
+            placeholder="Full Name"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            onChange={(e) => setName(e.target.value)}
             required
           />
-          <p className="mt-4 text-sm text-center">
-  Already have an account?{" "}
-  <span
-    className="text-indigo-600 cursor-pointer hover:underline"
-    onClick={() => navigate("/login")}
-  >
-    Login
-  </span>
-</p>
 
-          <span
-            className="absolute right-3 top-3 cursor-pointer select-none"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            👁
-          </span>
-        </div>
+          {/* Email */}
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        <button
-          disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-lg transition duration-200 flex items-center justify-center"
-        >
-          {loading ? (
-            <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          ) : (
-            "Create Account"
-          )}
-        </button>
-      </form>
+          {/* Password */}
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              className="w-full p-3 border rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <span
+              className="absolute right-3 top-3 cursor-pointer text-gray-500"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </span>
+          </div>
+
+          {/* Confirm Password */}
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Confirm Password"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          
+          
+
+          {/* Remember Me */}
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={() => setRememberMe(!rememberMe)}
+            />
+            Remember email
+          </label>
+
+          <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-lg transition">
+            Create Account
+          </button>
+
+          <p className="text-center text-sm">
+            Already have an account?{" "}
+            <span
+              className="text-indigo-600 cursor-pointer"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </span>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

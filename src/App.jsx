@@ -9,22 +9,63 @@ import Patients from "./pages/Patients";
 import Appointments from "./pages/Appointments";
 import Billing from "./pages/Billing";
 import MedicalRecords from "./pages/MedicalRecords";
+import ReceptionistDashboard from "./pages/ReceptionistDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminStaff from "./pages/AdminStaff";
+import CreateDoctor from "./pages/CreateDoctor";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
-import CreateDoctor from "./pages/CreateDoctor";
+import ForgotPassword from "./pages/ForgotPassword";
+
 
 function App() {
   return (
     <Routes>
 
-      {/* Public Routes */}
+      {/* PUBLIC ROUTES */}
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/settings" element={<Settings />} />
 
-      {/* Protected Routes */}
+      {/* ADMIN ROUTES */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <AdminDashboard />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/staff"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <AdminStaff />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* RECEPTIONIST ROUTE */}
+      <Route
+        path="/receptionist"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <ReceptionistDashboard />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* COMMON PROTECTED ROUTES */}
       <Route
         path="/dashboard"
         element={
@@ -35,16 +76,17 @@ function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
-  path="/create-doctor"
-  element={
-    <ProtectedRoute>
-      <Layout>
-        <CreateDoctor />
-      </Layout>
-    </ProtectedRoute>
-  }
-/>
+        path="/create-doctor"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <CreateDoctor />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/patients"

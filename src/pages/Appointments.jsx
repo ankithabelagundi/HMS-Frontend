@@ -18,6 +18,21 @@ const Appointments = () => {
   const [notes, setNotes] = useState("");
   const [bloodPressure, setBloodPressure] = useState("");
   const [weight, setWeight] = useState("");
+const [diagnosis, setDiagnosis] = useState("");
+const [treatment, setTreatment] = useState("");
+const [medicines, setMedicines] = useState([
+  { medicine: "", dosage: "", frequency: "", duration: "" }
+]);
+const addMedicine = () => {
+  setMedicines([
+    ...medicines,
+    { medicine: "", dosage: "", frequency: "", duration: "" }
+  ]);
+};
+const removeMedicine = (index) => {
+  const updated = medicines.filter((_, i) => i !== index);
+  setMedicines(updated);
+};
 
   /* =========================
      FETCH DOCTORS
@@ -85,15 +100,15 @@ const Appointments = () => {
   ========================== */
   const handleSaveMedicalRecord = async () => {
     try {
-      await api.post("/medical-records", {
-        patient_id: selectedAppointment.patient_id,
-        appointment_id: selectedAppointment.id,
-        prescription,
-        notes,
-        blood_pressure: bloodPressure,
-        weight
-      });
-
+   await api.post("/medical-records", {
+  patient_id: selectedAppointment.patient_id,
+  diagnosis,
+  treatment,
+  prescription: medicines,   // IMPORTANT
+  notes,
+  blood_pressure: bloodPressure,
+  weight
+});
       // Update appointment status
       await api.put(`/appointments/${selectedAppointment.id}`, {
         status: "completed"
@@ -170,6 +185,7 @@ const Appointments = () => {
             className="w-full p-3 border rounded-lg mb-4"
             required
           />
+
 
           <button
             disabled={loading}
@@ -272,13 +288,70 @@ const Appointments = () => {
             Add Medical Record
           </h2>
 
-          <input
-            type="text"
-            placeholder="Prescription"
-            value={prescription}
-            onChange={(e) => setPrescription(e.target.value)}
-            className="w-full p-3 border rounded-lg mb-3"
-          />
+        {medicines.map((med, index) => (
+  <div key={index} className="border p-3 mb-3 rounded bg-gray-50">
+
+    <input
+      placeholder="Medicine Name"
+      value={med.medicine}
+      onChange={(e) => {
+        const updated = [...medicines];
+        updated[index].medicine = e.target.value;
+        setMedicines(updated);
+      }}
+      className="w-full p-2 border mb-2"
+    />
+
+    <input
+      placeholder="Dosage"
+      value={med.dosage}
+      onChange={(e) => {
+        const updated = [...medicines];
+        updated[index].dosage = e.target.value;
+        setMedicines(updated);
+      }}
+      className="w-full p-2 border mb-2"
+    />
+
+    <input
+      placeholder="Frequency"
+      value={med.frequency}
+      onChange={(e) => {
+        const updated = [...medicines];
+        updated[index].frequency = e.target.value;
+        setMedicines(updated);
+      }}
+      className="w-full p-2 border mb-2"
+    />
+
+    <input
+      placeholder="Duration"
+      value={med.duration}
+      onChange={(e) => {
+        const updated = [...medicines];
+        updated[index].duration = e.target.value;
+        setMedicines(updated);
+      }}
+      className="w-full p-2 border mb-2"
+    />
+
+    {index > 0 && (
+      <button
+        onClick={() => removeMedicine(index)}
+        className="text-red-500 text-sm"
+      >
+        Remove
+      </button>
+    )}
+  </div>
+))}
+
+<button
+  onClick={addMedicine}
+  className="bg-blue-600 text-white px-4 py-2 rounded"
+>
+  + Add Medicine
+</button>
 
           <input
             type="text"
@@ -287,6 +360,21 @@ const Appointments = () => {
             onChange={(e) => setBloodPressure(e.target.value)}
             className="w-full p-3 border rounded-lg mb-3"
           />
+          <input
+  type="text"
+  placeholder="Diagnosis"
+  value={diagnosis}
+  onChange={(e) => setDiagnosis(e.target.value)}
+  className="w-full p-3 border rounded-lg mb-3"
+/>
+
+<input
+  type="text"
+  placeholder="Treatment"
+  value={treatment}
+  onChange={(e) => setTreatment(e.target.value)}
+  className="w-full p-3 border rounded-lg mb-3"
+/>
 
           <input
             type="text"

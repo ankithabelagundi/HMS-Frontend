@@ -109,6 +109,16 @@ const DoctorDashboard = () => {
                       >
                         Cancel
                       </button>
+                      <input
+  type="file"
+  onChange={async (e) => {
+    const formData = new FormData();
+    formData.append("signature", e.target.files[0]);
+
+    await api.post("/doctors/upload-signature", formData);
+    alert("Signature uploaded successfully");
+  }}
+/>
                     </>
                   )}
                 </td>
