@@ -105,6 +105,9 @@ const Sidebar = () => {
                 <Calendar size={18} />
                 Appointments
               </NavLink>
+              <NavLink to="/doctor/video-consultations" className={linkClasses}>
+  🎥 Video Consultations
+</NavLink>
 
               <NavLink to="/medical-records" className={linkClasses}>
                 <FileText size={18} />

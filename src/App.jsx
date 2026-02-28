@@ -13,6 +13,8 @@ import ReceptionistDashboard from "./pages/ReceptionistDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminStaff from "./pages/AdminStaff";
 import CreateDoctor from "./pages/CreateDoctor";
+import DoctorVideoConsultations from "./pages/DoctorVideoConsultation";
+
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
@@ -118,6 +120,17 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/doctor/video-consultations"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <DoctorVideoConsultations/>
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+     
 
       <Route
         path="/billing"
