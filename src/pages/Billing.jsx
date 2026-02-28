@@ -55,7 +55,6 @@ const Billing = () => {
         amount: data.amount,
         currency: "INR",
         order_id: data.id,
-
         handler: async function (response) {
           await api.post("/billing/verify-payment", {
             ...response,
@@ -96,50 +95,54 @@ const Billing = () => {
     }
   };
 
- const downloadInvoice = async (id) => {
-  try {
-    const token = localStorage.getItem("token");
+  const downloadInvoice = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
 
-    const response = await fetch(
-      `http://localhost:5000/api/billing/invoice/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const response = await fetch(
+        `http://localhost:5000/api/billing/invoice/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to download invoice");
       }
-    );
 
-    if (!response.ok) {
-      throw new Error("Failed to download invoice");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `invoice-${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+    } catch (error) {
+      console.error(error);
+      alert("Download failed");
     }
+  };
 
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `invoice-${id}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-  } catch (error) {
-    console.error(error);
-    alert("Download failed");
-  }
-};
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Billing</h1>
+    <div className="p-4 md:p-6">
+
+      <h1 className="text-xl md:text-2xl font-bold mb-4 dark:text-white">Billing</h1>
 
       {/* ADMIN CREATE INVOICE */}
       {user?.role === "admin" && (
-        <div className="border p-4 mb-6">
-          <h2 className="font-bold mb-2">Create Invoice</h2>
+        <div className="border p-4 mb-6 rounded-lg bg-white shadow-sm space-y-3 max-w-full md:max-w-lg">
+
+          <h2 className="font-bold">Create Invoice</h2>
 
           <select
             value={selectedPatient}
             onChange={(e) => setSelectedPatient(e.target.value)}
+            className="w-full border p-2 rounded"
           >
             <option value="">Select Patient</option>
             {patients.map((p) => (
@@ -154,6 +157,7 @@ const Billing = () => {
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="w-full border p-2 rounded"
           />
 
           <input
@@ -161,11 +165,12 @@ const Billing = () => {
             placeholder="Amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            className="w-full border p-2 rounded"
           />
 
           <button
             onClick={createInvoice}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            className="bg-blue-600 text-white px-4 py-2 rounded w-full md:w-auto"
           >
             Create Invoice
           </button>
@@ -177,37 +182,41 @@ const Billing = () => {
         <p>No bills found</p>
       ) : (
         bills.map((bill) => (
-          <div key={bill.id} className="border p-4 mb-4">
-            <p>Total: ₹{bill.total_amount}</p>
-            <p>Status: {bill.status}</p>
+          <div key={bill.id} className="border p-4 mb-4 rounded-lg bg-white shadow-sm">
+            <p className="mb-1">Total: ₹{bill.total_amount}</p>
+            <p className="mb-3">Status: {bill.status}</p>
 
-            {bill.status === "pending" && user?.role === "patient" && (
+            <div className="flex flex-col sm:flex-row gap-3">
+
+              {bill.status === "pending" && user?.role === "patient" && (
+                <button
+                  onClick={() => handlePayment(bill)}
+                  className="bg-green-600 text-white px-4 py-2 rounded w-full sm:w-auto"
+                >
+                  Pay Now
+                </button>
+              )}
+
               <button
-                onClick={() => handlePayment(bill)}
-                className="bg-green-600 text-white px-4 py-2 rounded mr-2"
+                onClick={() => downloadInvoice(bill.id)}
+                className="bg-blue-600 text-white px-4 py-2 rounded w-full sm:w-auto"
               >
-                Pay Now
+                Download Invoice
               </button>
-            )}
 
-            <button
-              onClick={() => downloadInvoice(bill.id)}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Download Invoice
-            </button>
+            </div>
           </div>
         ))
       )}
 
       {/* PAYMENT HISTORY */}
-      <h2 className="text-xl font-bold mt-6">Payment History</h2>
+      <h2 className="text-lg md:text-xl font-bold mt-6">Payment History</h2>
 
       {payments.length === 0 ? (
         <p>No payments yet</p>
       ) : (
         payments.map((p) => (
-          <div key={p.id} className="border p-3 mt-2">
+          <div key={p.id} className="border p-3 mt-2 rounded bg-white shadow-sm">
             <p>Invoice: {p.billing?.invoice_number}</p>
             <p>Method: {p.payment_method}</p>
             <p>Amount: ₹{p.paid_amount}</p>

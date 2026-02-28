@@ -53,7 +53,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors">
 
       {/* LEFT SIDE – Hospital Branding */}
       <div className="hidden md:flex w-1/2 bg-gradient-to-br from-indigo-600 to-purple-700 text-white flex-col justify-center items-center p-12">
@@ -68,9 +68,9 @@ const Login = () => {
       <div className="flex w-full md:w-1/2 justify-center items-center bg-gray-100">
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-2xl shadow-xl w-96 space-y-5"
+          className="bg-white p-8  dark:bg-gray-950 transition-colors rounded-2xl shadow-xl w-96 space-y-5"
         >
-          <h2 className="text-2xl font-bold text-center">
+          <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
             Login to Your Account
           </h2>
 
@@ -85,7 +85,7 @@ const Login = () => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="w-full p-3 border rounded-lg  dark:text-white  focus:outline-none focus:ring-2 focus:ring-indigo-400"
             required
           />
 
@@ -96,12 +96,12 @@ const Login = () => {
               autoComplete="off"
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border rounded-lg pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full p-3 border rounded-lg  dark:text-white  pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               required
             />
 
             <span
-              className="absolute right-3 top-3 cursor-pointer text-gray-500"
+              className="absolute right-3 top-3 cursor-pointer text-gray-500  dark:text-white "
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -132,7 +132,7 @@ const Login = () => {
             Login
           </button>
 
-          <p className="text-center text-sm">
+          <p className="text-center text-sm text-gray-900 dark:text-white">
             Don’t have an account?{" "}
             <span
               className="text-indigo-600 cursor-pointer"

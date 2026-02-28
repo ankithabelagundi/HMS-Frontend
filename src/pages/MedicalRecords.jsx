@@ -136,127 +136,148 @@ const handleUpdate = async () => {
     console.error("Update error:", error);
   }
 };
+return (
+  <div className="p-4 md:p-6">
 
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Medical Records</h1>
+    <h1 className="text-xl md:text-2xl font-bold mb-6 dark:text-white">
+      Medical Records
+    </h1>
 
-      {records.length === 0 && (
-        <p className="text-gray-500">No medical records found.</p>
-      )}
+    {records.length === 0 && (
+      <p className="text-gray-500">No medical records found.</p>
+    )}
 
-      <div className="space-y-6">
-        {records.map((record) => (
-          <div
-            key={record.id}
-            className="bg-white p-6 rounded shadow border-l-4 border-indigo-500"
-          >
-            <h2 className="font-semibold text-lg">
-              {record.patients?.users?.name}
-            </h2>
+    <div className="space-y-4 md:space-y-6">
+      {records.map((record) => (
+        <div
+          key={record.id}
+          className="bg-white p-4 md:p-6 rounded shadow border-l-4 border-indigo-500"
+        >
+          <h2 className="font-semibold text-base md:text-lg">
+            {record.patients?.users?.name}
+          </h2>
 
-            <p className="text-gray-600 text-sm">
-              Doctor: {record.doctors?.users?.name}
-            </p>
+          <p className="text-gray-600 text-sm">
+            Doctor: {record.doctors?.users?.name}
+          </p>
 
-            <p><strong>Diagnosis:</strong> {record.diagnosis}</p>
-            <p><strong>Treatment:</strong> {record.treatment}</p>
-            <p><strong>Blood Pressure:</strong> {record.blood_pressure}</p>
-            <p><strong>Weight:</strong> {record.weight}</p>
-            <p><strong>Notes:</strong> {record.notes}</p>
+          <p className="text-sm md:text-base">
+            <strong>Diagnosis:</strong> {record.diagnosis}
+          </p>
+          <p className="text-sm md:text-base">
+            <strong>Treatment:</strong> {record.treatment}
+          </p>
+          <p className="text-sm md:text-base">
+            <strong>Blood Pressure:</strong> {record.blood_pressure}
+          </p>
+          <p className="text-sm md:text-base">
+            <strong>Weight:</strong> {record.weight}
+          </p>
+          <p className="text-sm md:text-base">
+            <strong>Notes:</strong> {record.notes}
+          </p>
 
-            {Array.isArray(record.prescription) &&
-              record.prescription.map((med, index) => (
-                <div key={index} className="mt-2 p-2 bg-gray-100 rounded">
-                  <p><strong>{med.medicine}</strong></p>
-                  <p>{med.dosage} — {med.frequency}</p>
-                  <p>Duration: {med.duration}</p>
-                </div>
-              ))}
+          {Array.isArray(record.prescription) &&
+            record.prescription.map((med, index) => (
+              <div
+                key={index}
+                className="mt-2 p-2 bg-gray-100 rounded text-sm md:text-base"
+              >
+                <p><strong>{med.medicine}</strong></p>
+                <p>{med.dosage} — {med.frequency}</p>
+                <p>Duration: {med.duration}</p>
+              </div>
+            ))}
 
+          <div className="mt-4 flex flex-col sm:flex-row gap-2">
             <button
               onClick={() => generatePrescriptionPDF(record)}
-              className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition w-full sm:w-auto"
             >
               Download Prescription
             </button>
-            
-{user?.role === "doctor" && (
-  <div className="mt-3 flex gap-2">
-    <button
-      onClick={() => handleEdit(record)}
-      className="bg-yellow-500 text-white px-3 py-1 rounded"
-    >
-      Edit
-    </button>
 
-    <button
-      onClick={() => handleDelete(record.id)}
-      className="bg-red-600 text-white px-3 py-1 rounded"
-    >
-      Delete
-    </button>
-  </div>
-)}
+            {user?.role === "doctor" && (
+              <>
+                <button
+                  onClick={() => handleEdit(record)}
+                  className="bg-yellow-500 text-white px-3 py-2 rounded w-full sm:w-auto"
+                >
+                  Edit
+                </button>
 
-            <p className="text-xs text-gray-500 mt-3">
-              {new Date(record.created_at).toLocaleString()}
-            </p>
+                <button
+                  onClick={() => handleDelete(record.id)}
+                  className="bg-red-600 text-white px-3 py-2 rounded w-full sm:w-auto"
+                >
+                  Delete
+                </button>
+              </>
+            )}
           </div>
-        ))}
-      </div>
-      {editingRecord && (
-  <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
-    <div className="bg-white p-6 rounded w-96">
-      <h2 className="text-lg font-bold mb-3">Edit Record</h2>
 
-      <input
-        value={editingRecord.diagnosis || ""}
-        onChange={(e) =>
-          setEditingRecord({ ...editingRecord, diagnosis: e.target.value })
-        }
-        className="w-full border p-2 mb-2"
-        placeholder="Diagnosis"
-      />
-
-      <input
-        value={editingRecord.treatment || ""}
-        onChange={(e) =>
-          setEditingRecord({ ...editingRecord, treatment: e.target.value })
-        }
-        className="w-full border p-2 mb-2"
-        placeholder="Treatment"
-      />
-
-      <textarea
-        value={editingRecord.notes || ""}
-        onChange={(e) =>
-          setEditingRecord({ ...editingRecord, notes: e.target.value })
-        }
-        className="w-full border p-2 mb-2"
-        placeholder="Notes"
-      />
-
-      <div className="flex justify-between mt-3">
-        <button
-          onClick={handleUpdate}
-          className="bg-green-600 text-white px-4 py-2 rounded"
-        >
-          Save
-        </button>
-
-        <button
-          onClick={() => setEditingRecord(null)}
-          className="bg-gray-400 text-white px-4 py-2 rounded"
-        >
-          Cancel
-        </button>
-      </div>
+          <p className="text-xs text-gray-500 mt-3">
+            {new Date(record.created_at).toLocaleString()}
+          </p>
+        </div>
+      ))}
     </div>
+
+    {/* EDIT MODAL */}
+    {editingRecord && (
+      <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4">
+        <div className="bg-white p-4 md:p-6 rounded w-full max-w-md">
+          <h2 className="text-base md:text-lg font-bold mb-3">
+            Edit Record
+          </h2>
+
+          <input
+            value={editingRecord.diagnosis || ""}
+            onChange={(e) =>
+              setEditingRecord({ ...editingRecord, diagnosis: e.target.value })
+            }
+            className="w-full border p-2 mb-2 rounded"
+            placeholder="Diagnosis"
+          />
+
+          <input
+            value={editingRecord.treatment || ""}
+            onChange={(e) =>
+              setEditingRecord({ ...editingRecord, treatment: e.target.value })
+            }
+            className="w-full border p-2 mb-2 rounded"
+            placeholder="Treatment"
+          />
+
+          <textarea
+            value={editingRecord.notes || ""}
+            onChange={(e) =>
+              setEditingRecord({ ...editingRecord, notes: e.target.value })
+            }
+            className="w-full border p-2 mb-2 rounded"
+            placeholder="Notes"
+          />
+
+          <div className="flex flex-col sm:flex-row gap-2 mt-3">
+            <button
+              onClick={handleUpdate}
+              className="bg-green-600 text-white px-4 py-2 rounded w-full sm:w-auto"
+            >
+              Save
+            </button>
+
+            <button
+              onClick={() => setEditingRecord(null)}
+              className="bg-gray-400 text-white px-4 py-2 rounded w-full sm:w-auto"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
   </div>
-)}
-    </div>
-  );
+);
 };
 
 export default MedicalRecords;

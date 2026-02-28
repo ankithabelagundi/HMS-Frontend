@@ -17,6 +17,7 @@ import CreateDoctor from "./pages/CreateDoctor";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 import ForgotPassword from "./pages/ForgotPassword";
+import VideoConsultation from "./pages/VideoConsultation";
 
 
 function App() {
@@ -98,6 +99,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+  path="/video-consultation"
+  element={
+    <Layout>
+      <VideoConsultation />
+    </Layout>
+  }
+/>
 
       <Route
         path="/appointments"

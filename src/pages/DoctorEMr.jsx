@@ -1,23 +1,9 @@
 import { useState, useEffect } from "react";
 import api from "../services/api";
 
-const [prescription, setPrescription] = useState([
-  { medicine: "", dosage: "", frequency: "", duration: "" }
-]);
-const addMedicine = () => {
-  setPrescription([
-    ...prescription,
-    { medicine: "", dosage: "", frequency: "", duration: "" }
-  ]);
-};
-const handlePrescriptionChange = (index, field, value) => {
-  const updated = [...prescription];
-  updated[index][field] = value;
-  setPrescription(updated);
-};
-
 const DoctorEMR = () => {
   const [patients, setPatients] = useState([]);
+
   const [form, setForm] = useState({
     patient_id: "",
     diagnosis: "",
@@ -27,6 +13,23 @@ const DoctorEMR = () => {
     blood_pressure: "",
     weight: ""
   });
+
+  const [prescription, setPrescription] = useState([
+    { medicine: "", dosage: "", frequency: "", duration: "" }
+  ]);
+
+  const addMedicine = () => {
+    setPrescription([
+      ...prescription,
+      { medicine: "", dosage: "", frequency: "", duration: "" }
+    ]);
+  };
+
+  const handlePrescriptionChange = (index, field, value) => {
+    const updated = [...prescription];
+    updated[index][field] = value;
+    setPrescription(updated);
+  };
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -38,17 +41,21 @@ const DoctorEMR = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    alert("EMR Created");
+
     await api.post("/medical-records", {
-  ...form,
-  prescription
-});
+      ...form,
+      prescription
+    });
+
+    alert("EMR Created");
   };
 
   return (
-    <div className="bg-white p-6 rounded shadow max-w-2xl">
-      <h2 className="text-xl font-bold mb-4">Create EMR</h2>
+    <div className="bg-white p-4 md:p-6 rounded shadow w-full max-w-full md:max-w-2xl">
+
+      <h2 className="text-lg md:text-xl font-bold mb-4 dark:text-white">
+        Create EMR
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-3">
 
@@ -57,7 +64,7 @@ const DoctorEMR = () => {
           onChange={(e) =>
             setForm({ ...form, patient_id: e.target.value })
           }
-          className="w-full p-2 border"
+          className="w-full p-2 border rounded"
         >
           <option value="">Select Patient</option>
           {patients.map((p) => (
@@ -69,7 +76,7 @@ const DoctorEMR = () => {
 
         <textarea
           placeholder="Diagnosis"
-          className="w-full p-2 border"
+          className="w-full p-2 border rounded"
           onChange={(e) =>
             setForm({ ...form, diagnosis: e.target.value })
           }
@@ -77,23 +84,15 @@ const DoctorEMR = () => {
 
         <textarea
           placeholder="Treatment"
-          className="w-full p-2 border"
+          className="w-full p-2 border rounded"
           onChange={(e) =>
             setForm({ ...form, treatment: e.target.value })
           }
         />
 
-        <textarea
-          placeholder="Prescription"
-          className="w-full p-2 border"
-          onChange={(e) =>
-            setForm({ ...form, prescription: e.target.value })
-          }
-        />
-
         <input
           placeholder="Blood Pressure"
-          className="w-full p-2 border"
+          className="w-full p-2 border rounded"
           onChange={(e) =>
             setForm({ ...form, blood_pressure: e.target.value })
           }
@@ -101,7 +100,7 @@ const DoctorEMR = () => {
 
         <input
           placeholder="Weight"
-          className="w-full p-2 border"
+          className="w-full p-2 border rounded"
           onChange={(e) =>
             setForm({ ...form, weight: e.target.value })
           }
@@ -109,63 +108,65 @@ const DoctorEMR = () => {
 
         <textarea
           placeholder="Additional Notes"
-          className="w-full p-2 border"
+          className="w-full p-2 border rounded"
           onChange={(e) =>
             setForm({ ...form, notes: e.target.value })
           }
         />
 
-        <button className="bg-indigo-600 text-white px-4 py-2 rounded">
+        <button className="bg-indigo-600 text-white px-4 py-2 rounded w-full md:w-auto">
           Save EMR
         </button>
       </form>
-      <h3 className="font-semibold mt-4">Prescription</h3>
 
-{prescription.map((med, index) => (
-  <div key={index} className="grid grid-cols-2 gap-2 mb-3">
+      <h3 className="font-semibold mt-6">Prescription</h3>
 
-    <input
-      placeholder="Medicine"
-      className="border p-2"
-      onChange={(e) =>
-        handlePrescriptionChange(index, "medicine", e.target.value)
-      }
-    />
+      {prescription.map((med, index) => (
+        <div
+          key={index}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3"
+        >
+          <input
+            placeholder="Medicine"
+            className="border p-2 rounded"
+            onChange={(e) =>
+              handlePrescriptionChange(index, "medicine", e.target.value)
+            }
+          />
 
-    <input
-      placeholder="Dosage"
-      className="border p-2"
-      onChange={(e) =>
-        handlePrescriptionChange(index, "dosage", e.target.value)
-      }
-    />
+          <input
+            placeholder="Dosage"
+            className="border p-2 rounded"
+            onChange={(e) =>
+              handlePrescriptionChange(index, "dosage", e.target.value)
+            }
+          />
 
-    <input
-      placeholder="Frequency"
-      className="border p-2"
-      onChange={(e) =>
-        handlePrescriptionChange(index, "frequency", e.target.value)
-      }
-    />
+          <input
+            placeholder="Frequency"
+            className="border p-2 rounded"
+            onChange={(e) =>
+              handlePrescriptionChange(index, "frequency", e.target.value)
+            }
+          />
 
-    <input
-      placeholder="Duration"
-      className="border p-2"
-      onChange={(e) =>
-        handlePrescriptionChange(index, "duration", e.target.value)
-      }
-    />
+          <input
+            placeholder="Duration"
+            className="border p-2 rounded"
+            onChange={(e) =>
+              handlePrescriptionChange(index, "duration", e.target.value)
+            }
+          />
+        </div>
+      ))}
 
-  </div>
-))}
-
-<button
-  type="button"
-  onClick={addMedicine}
-  className="bg-gray-200 px-3 py-1 rounded"
->
-  + Add Medicine
-</button>
+      <button
+        type="button"
+        onClick={addMedicine}
+        className="bg-gray-200 px-3 py-1 rounded w-full md:w-auto"
+      >
+        + Add Medicine
+      </button>
     </div>
   );
 };

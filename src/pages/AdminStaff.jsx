@@ -24,7 +24,6 @@ const AdminStaff = () => {
     setTotalPages(data.totalPages);
   };
 
-  /* ================= CREATE STAFF ================= */
   const handleCreate = async () => {
     if (!name || !email || !password) {
       alert("All fields required");
@@ -49,7 +48,6 @@ const AdminStaff = () => {
     }
   };
 
-  /* ================= DELETE STAFF ================= */
   const deleteStaff = async (id) => {
     if (!window.confirm("Are you sure you want to delete this staff?")) return;
 
@@ -57,31 +55,29 @@ const AdminStaff = () => {
     fetchStaff();
   };
 
-  /* ================= TOGGLE STATUS ================= */
   const toggleStatus = async (id) => {
     await api.put(`/admin/staff/${id}/toggle`);
     fetchStaff();
   };
 
   const handleResetPassword = async (id) => {
-  const newPassword = prompt("Enter new password:");
+    const newPassword = prompt("Enter new password:");
+    if (!newPassword) return;
 
-  if (!newPassword) return;
+    await api.put(`/admin/staff/${id}/reset-password`, {
+      newPassword
+    });
 
-  await api.put(`/admin/staff/${id}/reset-password`, {
-    newPassword
-  });
-
-  alert("Password reset successfully");
-};
+    alert("Password reset successfully");
+  };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8">
 
-      <h1 className="text-3xl font-bold">Staff Management</h1>
+      <h1 className="text-2xl md:text-3xl font-bold dark:text-white">Staff Management</h1>
 
       {/* ================= CREATE STAFF ================= */}
-      <div className="bg-white p-6 rounded-xl shadow space-y-4 max-w-md">
+      <div className="bg-white p-4 md:p-6 rounded-xl shadow space-y-4 w-full md:max-w-md">
         <h2 className="text-lg font-semibold">Create Staff</h2>
 
         <input
@@ -125,73 +121,76 @@ const AdminStaff = () => {
           setPage(1);
           setSearch(e.target.value);
         }}
-        className="border p-2 rounded w-64"
+        className="border p-2 rounded w-full md:w-64"
       />
 
       {/* ================= TABLE ================= */}
-      <div className="bg-white rounded-xl shadow p-6">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-3 border">Name</th>
-              <th className="p-3 border">Email</th>
-              <th className="p-3 border">Role</th>
-              <th className="p-3 border">Status</th>
-              <th className="p-3 border">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {staff.map((s) => (
-              <tr key={s.id} className="hover:bg-gray-50">
-                <td className="p-3 border">{s.name}</td>
-                <td className="p-3 border">{s.email}</td>
-
-                <td className="p-3 border">
-                  <span className="px-2 py-1 rounded bg-blue-100 text-blue-700 text-sm">
-                    {s.role}
-                  </span>
-                </td>
-
-                <td className="p-3 border">
-                  <span
-                    className={`px-2 py-1 rounded text-sm ${
-                      s.status === "active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {s.status}
-                  </span>
-                </td>
-
-                <td className="p-3 border space-x-2">
-                  <button
-                    onClick={() => toggleStatus(s.id)}
-                    className="bg-yellow-500 text-white px-3 py-1 rounded"
-                  >
-                    Toggle
-                  </button>
-                  <button
-  onClick={() => handleResetPassword(s.id)}
-  className="bg-blue-600 text-white px-3 py-1 rounded"
->
-  Reset Password
-</button>
-
-                  <button
-                    onClick={() => deleteStaff(s.id)}
-                    className="bg-red-600 text-white px-3 py-1 rounded"
-                  >
-                    Delete
-                  </button>
-                </td>
+      <div className="bg-white rounded-xl shadow p-4 md:p-6">
+        <div className="overflow-x-auto">
+          <table className="min-w-[700px] w-full border-collapse">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="p-3 border">Name</th>
+                <th className="p-3 border">Email</th>
+                <th className="p-3 border">Role</th>
+                <th className="p-3 border">Status</th>
+                <th className="p-3 border">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {staff.map((s) => (
+                <tr key={s.id} className="hover:bg-gray-50">
+                  <td className="p-3 border">{s.name}</td>
+                  <td className="p-3 border">{s.email}</td>
+
+                  <td className="p-3 border">
+                    <span className="px-2 py-1 rounded bg-blue-100 text-blue-700 text-sm">
+                      {s.role}
+                    </span>
+                  </td>
+
+                  <td className="p-3 border">
+                    <span
+                      className={`px-2 py-1 rounded text-sm ${
+                        s.status === "active"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {s.status}
+                    </span>
+                  </td>
+
+                  <td className="p-3 border space-x-2 whitespace-nowrap">
+                    <button
+                      onClick={() => toggleStatus(s.id)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded"
+                    >
+                      Toggle
+                    </button>
+
+                    <button
+                      onClick={() => handleResetPassword(s.id)}
+                      className="bg-blue-600 text-white px-3 py-1 rounded"
+                    >
+                      Reset Password
+                    </button>
+
+                    <button
+                      onClick={() => deleteStaff(s.id)}
+                      className="bg-red-600 text-white px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {/* ================= PAGINATION ================= */}
-        <div className="flex justify-center mt-6 space-x-3">
+        <div className="flex flex-col md:flex-row justify-center items-center gap-3 mt-6">
           <button
             disabled={page === 1}
             onClick={() => setPage(page - 1)}

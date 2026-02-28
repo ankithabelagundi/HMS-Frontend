@@ -7,36 +7,34 @@ const Appointments = () => {
 
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
-
   const [doctorId, setDoctorId] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Medical Record States (Doctor Only)
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [prescription, setPrescription] = useState("");
   const [notes, setNotes] = useState("");
   const [bloodPressure, setBloodPressure] = useState("");
   const [weight, setWeight] = useState("");
-const [diagnosis, setDiagnosis] = useState("");
-const [treatment, setTreatment] = useState("");
-const [medicines, setMedicines] = useState([
-  { medicine: "", dosage: "", frequency: "", duration: "" }
-]);
-const addMedicine = () => {
-  setMedicines([
-    ...medicines,
+  const [diagnosis, setDiagnosis] = useState("");
+  const [treatment, setTreatment] = useState("");
+
+  const [medicines, setMedicines] = useState([
     { medicine: "", dosage: "", frequency: "", duration: "" }
   ]);
-};
-const removeMedicine = (index) => {
-  const updated = medicines.filter((_, i) => i !== index);
-  setMedicines(updated);
-};
 
-  /* =========================
-     FETCH DOCTORS
-  ========================== */
+  const addMedicine = () => {
+    setMedicines([
+      ...medicines,
+      { medicine: "", dosage: "", frequency: "", duration: "" }
+    ]);
+  };
+
+  const removeMedicine = (index) => {
+    const updated = medicines.filter((_, i) => i !== index);
+    setMedicines(updated);
+  };
+
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -46,13 +44,9 @@ const removeMedicine = (index) => {
         console.error("Doctor fetch error:", err);
       }
     };
-
     fetchDoctors();
   }, []);
 
-  /* =========================
-     FETCH APPOINTMENTS
-  ========================== */
   const fetchAppointments = async () => {
     try {
       const { data } = await api.get("/appointments");
@@ -66,9 +60,6 @@ const removeMedicine = (index) => {
     fetchAppointments();
   }, []);
 
-  /* =========================
-     BOOK APPOINTMENT (PATIENT)
-  ========================== */
   const handleBook = async (e) => {
     e.preventDefault();
 
@@ -95,28 +86,24 @@ const removeMedicine = (index) => {
     setLoading(false);
   };
 
-  /* =========================
-     SAVE MEDICAL RECORD (DOCTOR)
-  ========================== */
   const handleSaveMedicalRecord = async () => {
     try {
-   await api.post("/medical-records", {
-  patient_id: selectedAppointment.patient_id,
-  diagnosis,
-  treatment,
-  prescription: medicines,   // IMPORTANT
-  notes,
-  blood_pressure: bloodPressure,
-  weight
-});
-      // Update appointment status
+      await api.post("/medical-records", {
+        patient_id: selectedAppointment.patient_id,
+        diagnosis,
+        treatment,
+        prescription: medicines,
+        notes,
+        blood_pressure: bloodPressure,
+        weight
+      });
+
       await api.put(`/appointments/${selectedAppointment.id}`, {
         status: "completed"
       });
 
       alert("Medical record saved successfully");
 
-      // Reset
       setSelectedAppointment(null);
       setPrescription("");
       setNotes("");
@@ -124,22 +111,17 @@ const removeMedicine = (index) => {
       setWeight("");
 
       fetchAppointments();
-
     } catch (error) {
       console.error(error);
       alert("Error saving medical record");
     }
   };
 
-  /* =========================
-     CANCEL APPOINTMENT (PATIENT)
-  ========================== */
   const handleCancel = async (id) => {
     try {
       await api.put(`/appointments/${id}`, {
         status: "cancelled"
       });
-
       fetchAppointments();
     } catch (err) {
       console.error("Cancel error:", err);
@@ -147,20 +129,17 @@ const removeMedicine = (index) => {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">
+    <div className="p-4 md:p-6">
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 dark:text-white">
         Appointment Management
       </h1>
 
-      {/* =========================
-         BOOKING FORM (PATIENT ONLY)
-      ========================== */}
       {user?.role === "patient" && (
         <form
           onSubmit={handleBook}
-          className="mb-8 bg-white p-6 rounded-2xl shadow-lg"
+          className="mb-8 bg-white p-4 md:p-6 rounded-2xl shadow-lg"
         >
-          <h2 className="text-xl font-semibold mb-4">
+          <h2 className="text-lg md:text-xl font-semibold mb-4">
             Book Appointment
           </h2>
 
@@ -186,25 +165,21 @@ const removeMedicine = (index) => {
             required
           />
 
-
           <button
             disabled={loading}
-            className="bg-indigo-600 text-white px-6 py-2 rounded-lg"
+            className="bg-indigo-600 text-white px-6 py-2 rounded-lg w-full md:w-auto"
           >
             {loading ? "Booking..." : "Book Appointment"}
           </button>
         </form>
       )}
 
-      {/* =========================
-         APPOINTMENT TABLE
-      ========================== */}
-      <div className="bg-white p-6 rounded-2xl shadow-lg overflow-x-auto">
-        <h2 className="text-xl font-semibold mb-4">
+      <div className="bg-white p-4 md:p-6 rounded-2xl shadow-lg overflow-x-auto">
+        <h2 className="text-lg md:text-xl font-semibold mb-4">
           Appointments
         </h2>
 
-        <table className="w-full border-collapse">
+        <table className="min-w-[800px] w-full border-collapse">
           <thead>
             <tr className="bg-gray-100 text-left">
               <th className="p-3 border">Doctor</th>
@@ -223,14 +198,8 @@ const removeMedicine = (index) => {
           <tbody>
             {appointments.map((app) => (
               <tr key={app.id} className="hover:bg-gray-50">
-                <td className="p-3 border">
-                  {app.doctors?.users?.name}
-                </td>
-
-                <td className="p-3 border">
-                  {app.patients?.users?.name}
-                </td>
-
+                <td className="p-3 border">{app.doctors?.users?.name}</td>
+                <td className="p-3 border">{app.patients?.users?.name}</td>
                 <td className="p-3 border">
                   {new Date(app.appointment_date).toLocaleString("en-IN", {
                     timeZone: "Asia/Kolkata",
@@ -241,12 +210,8 @@ const removeMedicine = (index) => {
                     minute: "2-digit"
                   })}
                 </td>
+                <td className="p-3 border capitalize">{app.status}</td>
 
-                <td className="p-3 border capitalize">
-                  {app.status}
-                </td>
-
-                {/* DOCTOR ACTION */}
                 {user?.role === "doctor" && (
                   <td className="p-3 border">
                     {app.status !== "completed" && (
@@ -260,7 +225,6 @@ const removeMedicine = (index) => {
                   </td>
                 )}
 
-                {/* PATIENT CANCEL */}
                 {user?.role === "patient" && (
                   <td className="p-3 border">
                     {app.status !== "cancelled" && (
@@ -279,79 +243,63 @@ const removeMedicine = (index) => {
         </table>
       </div>
 
-      {/* =========================
-         MEDICAL RECORD FORM (DOCTOR)
-      ========================== */}
       {selectedAppointment && user?.role === "doctor" && (
-        <div className="mt-6 bg-white p-6 rounded-2xl shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">
+        <div className="mt-6 bg-white p-4 md:p-6 rounded-2xl shadow-lg">
+          <h2 className="text-lg md:text-xl font-semibold mb-4">
             Add Medical Record
           </h2>
 
-        {medicines.map((med, index) => (
-  <div key={index} className="border p-3 mb-3 rounded bg-gray-50">
+          {medicines.map((med, index) => (
+            <div key={index} className="border p-3 mb-3 rounded bg-gray-50">
+              <input
+                placeholder="Medicine Name"
+                value={med.medicine}
+                onChange={(e) => {
+                  const updated = [...medicines];
+                  updated[index].medicine = e.target.value;
+                  setMedicines(updated);
+                }}
+                className="w-full p-2 border mb-2"
+              />
+              <input
+                placeholder="Dosage"
+                value={med.dosage}
+                onChange={(e) => {
+                  const updated = [...medicines];
+                  updated[index].dosage = e.target.value;
+                  setMedicines(updated);
+                }}
+                className="w-full p-2 border mb-2"
+              />
+              <input
+                placeholder="Frequency"
+                value={med.frequency}
+                onChange={(e) => {
+                  const updated = [...medicines];
+                  updated[index].frequency = e.target.value;
+                  setMedicines(updated);
+                }}
+                className="w-full p-2 border mb-2"
+              />
+              <input
+                placeholder="Duration"
+                value={med.duration}
+                onChange={(e) => {
+                  const updated = [...medicines];
+                  updated[index].duration = e.target.value;
+                  setMedicines(updated);
+                }}
+                className="w-full p-2 border mb-2"
+              />
+            </div>
+          ))}
 
-    <input
-      placeholder="Medicine Name"
-      value={med.medicine}
-      onChange={(e) => {
-        const updated = [...medicines];
-        updated[index].medicine = e.target.value;
-        setMedicines(updated);
-      }}
-      className="w-full p-2 border mb-2"
-    />
-
-    <input
-      placeholder="Dosage"
-      value={med.dosage}
-      onChange={(e) => {
-        const updated = [...medicines];
-        updated[index].dosage = e.target.value;
-        setMedicines(updated);
-      }}
-      className="w-full p-2 border mb-2"
-    />
-
-    <input
-      placeholder="Frequency"
-      value={med.frequency}
-      onChange={(e) => {
-        const updated = [...medicines];
-        updated[index].frequency = e.target.value;
-        setMedicines(updated);
-      }}
-      className="w-full p-2 border mb-2"
-    />
-
-    <input
-      placeholder="Duration"
-      value={med.duration}
-      onChange={(e) => {
-        const updated = [...medicines];
-        updated[index].duration = e.target.value;
-        setMedicines(updated);
-      }}
-      className="w-full p-2 border mb-2"
-    />
-
-    {index > 0 && (
-      <button
-        onClick={() => removeMedicine(index)}
-        className="text-red-500 text-sm"
-      >
-        Remove
-      </button>
-    )}
-  </div>
-))}
-
-<button
-  onClick={addMedicine}
-  className="bg-blue-600 text-white px-4 py-2 rounded"
->
-  + Add Medicine
-</button>
+          <button
+            onClick={addMedicine}
+            className="bg-blue-600 text-white px-4 py-2 rounded mb-4 w-full md:w-auto"
+          >
+            + Add Medicine
+          </button>
 
           <input
             type="text"
@@ -360,21 +308,22 @@ const removeMedicine = (index) => {
             onChange={(e) => setBloodPressure(e.target.value)}
             className="w-full p-3 border rounded-lg mb-3"
           />
-          <input
-  type="text"
-  placeholder="Diagnosis"
-  value={diagnosis}
-  onChange={(e) => setDiagnosis(e.target.value)}
-  className="w-full p-3 border rounded-lg mb-3"
-/>
 
-<input
-  type="text"
-  placeholder="Treatment"
-  value={treatment}
-  onChange={(e) => setTreatment(e.target.value)}
-  className="w-full p-3 border rounded-lg mb-3"
-/>
+          <input
+            type="text"
+            placeholder="Diagnosis"
+            value={diagnosis}
+            onChange={(e) => setDiagnosis(e.target.value)}
+            className="w-full p-3 border rounded-lg mb-3"
+          />
+
+          <input
+            type="text"
+            placeholder="Treatment"
+            value={treatment}
+            onChange={(e) => setTreatment(e.target.value)}
+            className="w-full p-3 border rounded-lg mb-3"
+          />
 
           <input
             type="text"
@@ -393,7 +342,7 @@ const removeMedicine = (index) => {
 
           <button
             onClick={handleSaveMedicalRecord}
-            className="bg-green-600 text-white px-6 py-2 rounded-lg"
+            className="bg-green-600 text-white px-6 py-2 rounded-lg w-full md:w-auto"
           >
             Save & Complete
           </button>

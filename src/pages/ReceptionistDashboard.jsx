@@ -30,7 +30,7 @@ const ReceptionistDashboard = () => {
   return (
     <div className="p-8 space-y-8 ">
 
-      <h1 className="text-3xl font-bold">Receptionist Dashboard</h1>
+      <h1 className="text-3xl font-bold dark:text-white">Receptionist Dashboard</h1>
       <div className="grid grid-cols-3 gap-6">
         <div className="bg-white rounded-xl shadow p-6">
           <p className="text-gray-500 text-sm">Total Patients</p>

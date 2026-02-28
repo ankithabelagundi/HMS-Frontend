@@ -65,7 +65,7 @@ const Patients = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Patients</h1>
+      <h1 className="text-2xl font-bold mb-6 dark:text-white">Patients</h1>
 
       {/* =========================
          ADD PATIENT FORM
@@ -145,11 +145,11 @@ const Patients = () => {
       {/* =========================
          PATIENT TABLE
       ========================== */}
-      <table className="w-full border">
+      <table className="w-full border dark:text-white">
         <thead>
           <tr className="bg-gray-200">
-            <th className="p-2 border">Name</th>
-            <th className="p-2 border">Email</th>
+            <th className="p-2 border dark:text-black">Name</th>
+            <th className="p-2 border dark:text-black">Email</th>
           </tr>
         </thead>
 

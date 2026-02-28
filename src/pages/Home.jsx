@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -9,6 +10,38 @@ const Home = () => {
   const sectionsRef = useRef([]);
   const [showEmergency, setShowEmergency] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [activeSpeciality, setActiveSpeciality] = useState("Cardiology");
+  const specialityData = {
+  Cardiology: {
+    icon: "❤️",
+    image:
+      "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop",
+    description:
+      "Advanced heart care including bypass surgery, angioplasty and cardiac diagnostics."
+  },
+  Orthopedics: {
+    icon: "🦴",
+    image:
+      "https://tse2.mm.bing.net/th/id/OIP.IwFhw23hqFWz_0tX8vIE-QHaE0?pid=Api&P=0&h=180",
+    description:
+      "Comprehensive bone and joint treatments including replacements."
+  },
+  Oncology: {
+    icon: "🧬",
+    image:
+      "https://storage.googleapis.com/craft-production-static-content/prod/_1024xAUTO_crop_center-center_none_ns/94535/oncologynursecancertreatment.webp",
+    description:
+      "Precision cancer treatment with chemotherapy and surgical oncology."
+  },
+  Nephrology: {
+    icon: "🩺",
+    image:
+      "https://tse4.mm.bing.net/th/id/OIP.0AqWGXEEFaDxb5YO71YUxgHaHa?pid=Api&P=0&h=180",
+    description:
+      "Expert kidney care including dialysis and transplant management."
+  }
+};
 
   
 
@@ -62,8 +95,10 @@ const Home = () => {
   setMobileOpen(false);
 };
 
+
+
   return (
-   <div className="font-sans bg-white text-gray-800 transition-colors duration-300 overflow-x-hidden">
+   <div className="font-sans bg-white dark:bg-gray-950 text-gray-800 dark:text-gray-100 transition-colors duration-300">
 
       {/* ================= NAVBAR ================= */}
       
@@ -74,6 +109,7 @@ const Home = () => {
   : "bg-transparent py-6"
   }`}
 >
+  
   <div className="flex justify-between items-center px-6 md:px-10">
 
     {/* Logo */}
@@ -82,6 +118,7 @@ const Home = () => {
 }`}>
       WellNest Hospitals
     </h1>
+    
 
     {/* Desktop Menu */}
     <div className="hidden md:flex gap-8 font-medium">
@@ -96,21 +133,26 @@ const Home = () => {
     </div>
 
     {/* Desktop Auth Buttons */}
-    <div className="hidden md:flex gap-4">
-      <button
-        onClick={() => navigate("/login")}
-        className="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg"
-      >
-        Login
-      </button>
-      <button
-        onClick={() => navigate("/signup")}
-        className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
-      >
-        Sign Up
-      </button>
-    </div>
+    {/* Desktop Auth Buttons */}
+<div className="hidden md:flex gap-4 items-center">
 
+  <ThemeToggle />
+
+  <button
+    onClick={() => navigate("/login")}
+    className="px-4 py-2 border border-indigo-600 text-indigo-600 rounded-lg"
+  >
+    Login
+  </button>
+
+  <button
+    onClick={() => navigate("/signup")}
+    className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
+  >
+    Sign Up
+  </button>
+
+</div>
     {/* Hamburger Button */}
     <button
       onClick={() => setMobileOpen(!mobileOpen)}
@@ -132,6 +174,9 @@ const Home = () => {
       <button onClick={() => scrollTo("specializations")} className="block w-full text-left">
         Specializations
       </button>
+      <button onClick={() => scrollTo("video")}>
+  Video Consultation
+</button>
 
       <button onClick={() => scrollTo("achievements")} className="block w-full text-left">
         Achievements
@@ -160,9 +205,10 @@ const Home = () => {
   )}
 </nav>
 
+
       {/* ================= HERO ================= */}
       <section
-        className="h-screen pt-24 bg-fixed bg-cover bg-center relative flex items-center justify-center text-center"
+        className="min-h-screen bg-fixed bg-cover bg-center relative flex items-center justify-center text-center"
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1586773860418-d37222d8fce3')"
@@ -186,6 +232,12 @@ const Home = () => {
             >
               Book Appointment
             </button>
+            <button
+  onClick={() => setShowVideoModal(true)}
+  className="border border-indigo-600 text-indigo-600 px-8 py-3 rounded-lg"
+>
+  Video Consultation
+</button>
 
             <button
               onClick={() => scrollTo("about")}
@@ -203,8 +255,8 @@ const Home = () => {
         ref={(el) => (sectionsRef.current[0] = el)}
         className="py-24 px-10 text-center bg-white dark:bg-gray-900 reveal"
       >
-        <h3 className="text-4xl font-bold mb-8">About Us</h3>
-        <p className="max-w-4xl mx-auto text-gray-600">
+        <h3 className="text-4xl font-bold mb-8 dark:text-white">About Us</h3>
+        <p className="max-w-4xl mx-auto text-gray-600 dark:text-white">
           Delivering world-class healthcare with advanced medical
           infrastructure and expert specialists.
         </p>
@@ -240,39 +292,131 @@ const Home = () => {
           </div>
         </div>
       </section>
+      <section
+  id="video"
+  className="py-24 px-10 bg-indigo-50 dark:bg-gray-950 text-center transition-colors"
+>
+
+{/* ================= SPECIALITY SHOWCASE ================= */}
+<div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-start mb-20">
+
+  {/* LEFT SIDE - SPECIALITY CARDS */}
+  <div className="grid grid-cols-2 gap-6">
+
+    {Object.keys(specialityData).map((key) => (
+      <div
+        key={key}
+        onClick={() => setActiveSpeciality(key)}
+      className={`cursor-pointer border rounded-2xl p-8 text-center transition-all duration-300
+  ${
+    activeSpeciality === key
+      ? "border-indigo-600 shadow-xl bg-white dark:bg-gray-800"
+      : "bg-white dark:bg-gray-800 hover:shadow-md"
+  }`}
+      >
+        <div className="text-5xl mb-4">
+          {specialityData[key].icon}
+        </div>
+        <h4 className="font-semibold text-lg">{key}</h4>
+      </div>
+    ))}
+
+  </div>
+
+  {/* RIGHT SIDE - IMAGE + CONTENT */}
+  <div>
+
+    <img
+      src={specialityData[activeSpeciality].image}
+      alt="speciality"
+      className="w-full h-[400px] object-cover rounded-2xl shadow-lg mb-8"
+    />
+
+    <h4 className="text-4xl font-bold mb-4">
+      {activeSpeciality}
+    </h4>
+
+    <p className="text-gray-600 text-lg leading-relaxed dark:text-white">
+      {specialityData[activeSpeciality].description}
+    </p>
+
+  </div>
+
+</div>
+
+
+  <h3 className="text-4xl font-bold mb-6">
+    Online Video Consultation
+  </h3>
+
+  <p className="max-w-3xl mx-auto text-gray-600 mb-10 dark:text-white">
+    Consult our expert doctors from the comfort of your home.
+    Secure video sessions with digital prescriptions.
+  </p>
+
+  <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+    
+    <div className="glass-card">
+      <h4 className="text-xl font-semibold mb-3">Book Slot</h4>
+      <p>Select your preferred doctor & time.</p>
+    </div>
+
+    <div className="glass-card">
+      <h4 className="text-xl font-semibold mb-3">Join Video Call</h4>
+      <p>Secure HD consultation session.</p>
+    </div>
+
+    <div className="glass-card">
+      <h4 className="text-xl font-semibold mb-3">Get E-Prescription</h4>
+      <p>Download prescription instantly.</p>
+    </div>
+
+  </div>
+
+  <button
+    onClick={() => setShowVideoModal(true)}
+    className="mt-10 bg-indigo-600 text-white px-8 py-3 rounded-lg"
+  >
+    Start Video Consultation
+  </button>
+</section>
 
       {/* ================= MAIN ACHIEVEMENTS ================= */}
-      <section
-        id="achievements"
-        ref={(el) => (sectionsRef.current[2] = el)}
-        className="py-24 px-10 bg-indigo-700 dark:bg-indigo-900 text-white reveal"
-      >
-        <h3 className="text-4xl font-bold mb-12">Our Achievements</h3>
+<section
+  id="achievements"
+  ref={(el) => (sectionsRef.current[2] = el)}
+ className="py-24 px-10 bg-gradient-to-r from-indigo-800 to-indigo-600 text-white reveal"
+>
+  <h3 className="text-4xl font-bold mb-12 text-center">
+    Our Achievements
+  </h3>
 
-        <div className="grid md:grid-cols-4 gap-8">
-          <div className="glass-card">
-            <h4 className="text-5xl font-bold">{count.success}%</h4>
-            <p>Success Rate</p>
-          </div>
+  <div className="grid md:grid-cols-4 gap-8">
 
-          <div className="glass-card">
-            <h4 className="text-5xl font-bold">
-              {count.patients.toLocaleString()}+
-            </h4>
-            <p>Patients Treated</p>
-          </div>
+    <div className="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl text-center">
+      <h4 className="text-5xl font-bold">{count.success}%</h4>
+      <p className="mt-2 text-gray-200">Success Rate</p>
+    </div>
 
-          <div className="glass-card">
-            <h4 className="text-5xl font-bold">200+</h4>
-            <p>Expert Doctors</p>
-          </div>
+    <div className="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl text-center">
+      <h4 className="text-5xl font-bold">
+        {count.patients.toLocaleString()}+
+      </h4>
+      <p className="mt-2 text-gray-200">Patients Treated</p>
+    </div>
 
-          <div className="glass-card">
-            <h4 className="text-5xl font-bold">15+</h4>
-            <p>Years Experience</p>
-          </div>
-        </div>
-      </section>
+    <div className="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl text-center">
+      <h4 className="text-5xl font-bold">200+</h4>
+      <p className="mt-2 text-gray-200">Expert Doctors</p>
+    </div>
+
+    <div className="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl text-center">
+      <h4 className="text-5xl font-bold">15+</h4>
+      <p className="mt-2 text-gray-200">Years Experience</p>
+    </div>
+
+  </div>
+</section>
 
       {/* ================= CONTACT ================= */}
       <section
@@ -370,6 +514,42 @@ const Home = () => {
   </div>
 )}
 
+{showVideoModal && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="bg-white p-10 rounded-2xl shadow-2xl w-96 relative">
+
+      <button
+        onClick={() => setShowVideoModal(false)}
+        className="absolute top-4 right-4"
+      >
+        ✕
+      </button>
+
+      <h2 className="text-2xl font-bold mb-6 text-center">
+        Video Consultation
+      </h2>
+
+      <button
+        onClick={() => {
+          setShowVideoModal(false);
+          navigate("/signup");
+        }}
+        className="w-full bg-indigo-600 text-white py-3 rounded-lg mb-4"
+      >
+        Register & Book
+      </button>
+
+      <button
+        onClick={() => setShowVideoModal(false)}
+        className="w-full border py-3 rounded-lg"
+      >
+        Cancel
+      </button>
+
+    </div>
+  </div>
+)}
+
       {/* ================= FOOTER ================= */}
       <footer className="bg-gray-900 text-gray-300 text-center py-6">
         © 2026 WellNest Hospitals. All rights reserved.
@@ -393,6 +573,11 @@ const Home = () => {
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   padding: 2rem;
   border-radius: 1rem;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.dark .glass-card {
+  background: #1f2937; /* gray-800 */
 }
       `}</style>
     </div>

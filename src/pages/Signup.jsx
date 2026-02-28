@@ -59,7 +59,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen dark:bg-gray-900 transition-colors">
 
       {/* LEFT SIDE */}
       <div className="hidden md:flex w-1/2 bg-gradient-to-br from-indigo-600 to-purple-700 text-white flex-col justify-center items-center p-12">
@@ -71,12 +71,12 @@ const Signup = () => {
       </div>
 
       {/* RIGHT SIDE */}
-      <div className="flex w-full md:w-1/2 justify-center items-center bg-gray-100">
+      <div className="flex w-full md:w-1/2 justify-center items-center bg-gray-100  transition-colors">
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-2xl shadow-xl w-96 space-y-5"
+          className="bg-white p-8 rounded-2xl dark:bg-gray-900 shadow-xl w-96 space-y-5"
         >
-          <h2 className="text-2xl font-bold text-center">
+          <h2 className="text-2xl font-bold text-center dark:bg-gray-900 text-gray-900 dark:text-white">
             Create Account
           </h2>
 
@@ -88,7 +88,7 @@ const Signup = () => {
           <input
             type="text"
             placeholder="Full Name"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="w-full p-3 border dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
             onChange={(e) => setName(e.target.value)}
             required
           />
@@ -98,7 +98,7 @@ const Signup = () => {
             type="email"
             placeholder="Email"
             value={email}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 dark:text-white focus:ring-indigo-400"
             onChange={(e) => setEmail(e.target.value)}
             required
           />
@@ -114,7 +114,7 @@ const Signup = () => {
             />
 
             <span
-              className="absolute right-3 top-3 cursor-pointer text-gray-500"
+              className="absolute right-3 top-3 cursor-pointer text-gray-500 dark:text-white"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -146,7 +146,7 @@ const Signup = () => {
             Create Account
           </button>
 
-          <p className="text-center text-sm">
+          <p className="text-center text-sm text-gray-900 dark:text-white">
             Already have an account?{" "}
             <span
               className="text-indigo-600 cursor-pointer"
