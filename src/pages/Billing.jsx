@@ -45,36 +45,37 @@ const Billing = () => {
   };
 
   const handlePayment = async (bill) => {
-    try {
-      const { data } = await api.post("/billing/create-order", {
-        amount: bill.total_amount
-      });
+  try {
+    const { data } = await api.post("/billing/create-order", {
+      amount: Number(bill.total_amount),
+      billing_id: bill.id
+    });
 
-      const options = {
-        key: "rzp_test_SKrsjI8KyyKX7D",
-        amount: data.amount,
-        currency: "INR",
-        order_id: data.id,
-        handler: async function (response) {
-          await api.post("/billing/verify-payment", {
-            ...response,
-            billing_id: bill.id
-          });
+    const options = {
+      key: "rzp_test_SKrsjI8KyyKX7D",
+      amount: data.amount,
+      currency: "INR",
+      order_id: data.id,
+      handler: async function (response) {
+        await api.post("/billing/verify-payment", {
+          ...response,
+          billing_id: bill.id
+        });
 
-          alert("Payment successful");
-          fetchBills();
-          fetchPayments();
-        }
-      };
+        alert("Payment successful");
+        fetchBills();
+        fetchPayments();
+      }
+    };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+    const rzp = new window.Razorpay(options);
+    rzp.open();
 
-    } catch (error) {
-      console.error(error);
-      alert("Payment failed");
-    }
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Payment failed");
+  }
+};
 
   const createInvoice = async () => {
     try {
