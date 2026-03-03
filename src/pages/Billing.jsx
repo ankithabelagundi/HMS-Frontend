@@ -52,21 +52,21 @@ const Billing = () => {
     });
 
     const options = {
-      key: "rzp_test_SKrsjI8KyyKX7D",
-      amount: data.amount,
-      currency: "INR",
-      order_id: data.id,
-      handler: async function (response) {
-        await api.post("/billing/verify-payment", {
-          ...response,
-          billing_id: bill.id
-        });
+  key: "rzp_test_SLavUdgRvVZTG7",
+  amount: data.amount,
+  currency: "INR",
+  order_id: data.order_id,
+  handler: async function (response) {
+    await api.post("/billing/verify-payment", {
+      ...response,
+      billing_id: bill.id
+    });
 
-        alert("Payment successful");
-        fetchBills();
-        fetchPayments();
-      }
-    };
+    alert("Payment successful");
+    fetchBills();
+    fetchPayments();
+  }
+};
 
     const rzp = new window.Razorpay(options);
     rzp.open();
