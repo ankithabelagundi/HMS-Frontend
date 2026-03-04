@@ -45,22 +45,22 @@ const VideoConsultation = () => {
       name: "Clinic Video Consultation",
       order_id: data.id,
 
-      handler: async function (response) {
+     handler: async function (response) {
 
-        //  Verify payment
-        const verifyRes = await api.post("/billing/video/verify-payment", {
-  razorpay_order_id: response.razorpay_order_id,
-  razorpay_payment_id: response.razorpay_payment_id,
-  razorpay_signature: response.razorpay_signature,
-  consultation_id: data.consultation_id
-});
+  const verifyRes = await api.post("/billing/video/verify-payment", {
+    razorpay_order_id: response.razorpay_order_id,
+    razorpay_payment_id: response.razorpay_payment_id,
+    razorpay_signature: response.razorpay_signature,
+    consultation_id: data.consultation_id
+  });
 
-        if (verifyRes.data.meet_link) {
-          window.location.href = verifyRes.data.meet_link;
-        } else {
-          alert("Payment successful but meeting link missing.");
-        }
-      }
+  if (verifyRes.data.meet_link) {
+    window.location.href = verifyRes.data.meet_link;
+  } else {
+    alert("Meeting link missing");
+  }
+
+}
     };
 
     const rzp = new window.Razorpay(options);
