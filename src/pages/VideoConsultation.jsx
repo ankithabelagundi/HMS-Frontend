@@ -65,26 +65,7 @@ const VideoConsultation = () => {
 
     const rzp = new window.Razorpay(options);
     rzp.open();
-    //  Create billing entry
-const { data: billing } = await supabase
-  .from("billing")
-  .insert([{
-    patient_id: consultation.patient_id,
-    total_amount: consultation.amount,
-    status: "paid",
-    type: "video_consultation"  // 🔥 add this column if not exists
-  }])
-  .select()
-  .single();
 
-// Insert payment record
-await supabase
-  .from("payments")
-  .insert([{
-    billing_id: billing.id,
-    payment_method: "razorpay",
-    paid_amount: consultation.amount
-  }]);
 
   } catch (err) {
     console.error("Booking error:", err);
