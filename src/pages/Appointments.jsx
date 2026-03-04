@@ -10,6 +10,7 @@ const Appointments = () => {
   const [doctorId, setDoctorId] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [loading, setLoading] = useState(false);
+  const today = new Date().toISOString().slice(0, 16);
 
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [prescription, setPrescription] = useState("");
@@ -80,7 +81,7 @@ const Appointments = () => {
       setAppointmentDate("");
       fetchAppointments();
     } catch (err) {
-      alert(err.response?.data?.error || "Booking failed");
+      alert(err.response?.data?.error || "Slot unavailable. Try another time.");
     }
 
     setLoading(false);
@@ -157,13 +158,15 @@ const Appointments = () => {
             ))}
           </select>
 
-          <input
-            type="datetime-local"
-            value={appointmentDate}
-            onChange={(e) => setAppointmentDate(e.target.value)}
-            className="w-full p-3 border rounded-lg mb-4"
-            required
-          />
+         <input
+  type="datetime-local"
+  min={new Date().toISOString().slice(0,16)}
+  value={appointmentDate}
+  onChange={(e) => setAppointmentDate(e.target.value)}
+  className="w-full p-3 border rounded-lg mb-4"
+  required
+/>
+          
 
           <button
             disabled={loading}
