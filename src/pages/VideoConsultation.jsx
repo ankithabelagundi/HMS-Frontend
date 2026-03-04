@@ -24,17 +24,19 @@ const VideoConsultation = () => {
 }, []);
 
   // ✅ MOVE FUNCTION INSIDE COMPONENT
-const handleBook = async () => {
+ const handleBook = async () => {
   if (!selectedDoctor) {
     alert("Please select doctor");
     return;
   }
 
   try {
-    const { data } = await api.post("/billing/create-video-order", {
-      doctor_id: selectedDoctor,
-      amount: 500
-    });
+    //  Create order
+      const { data } = await api.post("/billing/video/create-order", {
+  doctor_id: selectedDoctor,
+  date,
+  amount: 500
+});
 
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -45,12 +47,13 @@ const handleBook = async () => {
 
       handler: async function (response) {
 
-        const verifyRes = await api.post("/billing/verify-video-payment", {
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_signature,
-          consultation_id: data.consultation_id
-        });
+        //  Verify payment
+        const verifyRes = await api.post("/billing/video/verify-payment", {
+  razorpay_order_id: response.razorpay_order_id,
+  razorpay_payment_id: response.razorpay_payment_id,
+  razorpay_signature: response.razorpay_signature,
+  consultation_id: data.consultation_id
+});
 
         if (verifyRes.data.meet_link) {
           window.location.href = verifyRes.data.meet_link;
@@ -62,12 +65,31 @@ const handleBook = async () => {
 
     const rzp = new window.Razorpay(options);
     rzp.open();
+    //  Create billing entry
+const { data: billing } = await supabase
+  .from("billing")
+  .insert([{
+    patient_id: consultation.patient_id,
+    total_amount: consultation.amount,
+    status: "paid",
+    type: "video_consultation"  // 🔥 add this column if not exists
+  }])
+  .select()
+  .single();
+
+// Insert payment record
+await supabase
+  .from("payments")
+  .insert([{
+    billing_id: billing.id,
+    payment_method: "razorpay",
+    paid_amount: consultation.amount
+  }]);
 
   } catch (err) {
     console.error("Booking error:", err);
-    alert("Payment failed");
   }
-};;
+};
 
   return (
     <div>
