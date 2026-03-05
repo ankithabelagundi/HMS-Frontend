@@ -49,7 +49,7 @@ const Topbar = () => {
     <div className="bg-white shadow-sm px-6 md:px-8 py-4 flex justify-between items-center border-b">
 
       {/* Left Title */}
-      <h2 className="text-lg md:text-xl font-semibold">
+      <h2 className="text-lg md:text-xl font-semibold text-center">
         Dashboard
       </h2>
 
