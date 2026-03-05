@@ -49,7 +49,9 @@ const Topbar = () => {
     <div className="bg-white shadow-sm px-6 md:px-8 py-4 flex justify-between items-center border-b">
 
       {/* Left Title */}
-      
+      <h2 className=" md:text-xl font-semibold text-center">
+        Dashboard
+      </h2>
 
       {/* Right Section */}
       <div className="flex items-center gap-6">
